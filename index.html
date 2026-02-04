@@ -16,7 +16,7 @@ body{
   overflow-x:hidden;
 }
 
-/* BACKGROUND */
+/* CANVAS BACKGROUND */
 canvas{
   position:fixed;
   inset:0;
@@ -24,7 +24,7 @@ canvas{
 }
 #hearts{z-index:-1}
 
-/* GLOW */
+/* ANIMATIONS */
 @keyframes glowPulse{
   0%{box-shadow:0 0 15px rgba(255,120,180,.6)}
   50%{box-shadow:0 0 35px rgba(255,120,180,1)}
@@ -55,7 +55,7 @@ canvas{
   animation:glowPulse 1.5s infinite;
 }
 
-/* MUSIC */
+/* MUSIC BUTTON */
 .music{
   position:fixed;
   top:20px;right:20px;
@@ -88,14 +88,6 @@ section{
   margin-top:18px;
   font-size:18px;
   opacity:.9;
-}
-
-/* SWIPE */
-.hint{
-  margin-top:40px;
-  opacity:.6;
-  font-size:14px;
-  animation:beat 1.5s infinite;
 }
 
 /* PHOTOS */
@@ -163,7 +155,7 @@ section{
 
 <body>
 
-<canvas id="aurora"></canvas>
+<!-- BACKGROUND CANVAS -->
 <canvas id="hearts"></canvas>
 
 <audio id="song" preload="auto" playsinline>
@@ -179,7 +171,6 @@ section{
 <section class="hero">
   <h1>Happy Birthday Kunnu Don 😄💕</h1>
   <p>Scroll down for surprise 😁<br>It’s a moment made for you ✨</p>
-  <div class="hint">⬇ swipe ⬇</div>
 </section>
 
 <section class="photos">
@@ -191,6 +182,8 @@ section{
 </section>
 
 <section>
+  <h2>Tap the cake to cut 🎂</h2>
+
   <div class="cake" id="cake">🎂</div>
 
   <button class="cut-btn" onclick="cutCake()">
@@ -221,7 +214,6 @@ function start(){
   overlay.style.display = "none";
   song.play().catch(()=>{});
 }
-
 function toggleMusic(){
   song.paused ? song.play() : song.pause();
 }
@@ -230,32 +222,24 @@ function toggleMusic(){
 const cake = document.getElementById("cake");
 const msg = document.getElementById("msg");
 const secret = document.getElementById("secret");
-
 const text = "Wooooow 🎉 Cake cut ho gaya!";
-let i = 0;
-let done = false;
+let i = 0, done = false;
 
 function cutCake(){
   if(done) return;
   done = true;
-
   cake.classList.add("cut");
   typeText();
   confetti();
 }
-
-/* TYPE EFFECT */
 function typeText(){
   if(i < text.length){
-    msg.innerHTML += text.charAt(i);
-    i++;
+    msg.innerHTML += text.charAt(i++);
     setTimeout(typeText, 80);
   }else{
     secret.style.display = "block";
   }
 }
-
-/* CONFETTI */
 function confetti(){
   for(let j=0;j<40;j++){
     const c = document.createElement("div");
@@ -267,8 +251,47 @@ function confetti(){
     setTimeout(()=>c.remove(),1200);
   }
 }
+
+/* ❤️ HEART BACKGROUND ANIMATION ❤️ */
+const canvas = document.getElementById("hearts");
+const ctx = canvas.getContext("2d");
+let w,h;
+
+function resize(){
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+const hearts = [];
+for(let i=0;i<60;i++){
+  hearts.push({
+    x: Math.random()*w,
+    y: Math.random()*h,
+    size: Math.random()*15+10,
+    speed: Math.random()*1+0.5,
+    alpha: Math.random()*0.6+0.3
+  });
+}
+
+function animateHearts(){
+  ctx.clearRect(0,0,w,h);
+  hearts.forEach(h=>{
+    ctx.globalAlpha = h.alpha;
+    ctx.font = h.size+"px Arial";
+    ctx.fillStyle = "hotpink";
+    ctx.fillText("❤", h.x, h.y);
+    h.y -= h.speed;
+    if(h.y < -20){
+      h.y = h+20;
+      h.x = Math.random()*w;
+    }
+  });
+  requestAnimationFrame(animateHearts);
+}
+animateHearts();
 </script>
 
 </body>
 </html>
-
