@@ -24,13 +24,12 @@ canvas{
 }
 #hearts{z-index:-1}
 
-/* ===== GLOW ANIMATIONS ===== */
+/* GLOW */
 @keyframes glowPulse{
   0%{box-shadow:0 0 15px rgba(255,120,180,.6)}
   50%{box-shadow:0 0 35px rgba(255,120,180,1)}
   100%{box-shadow:0 0 15px rgba(255,120,180,.6)}
 }
-
 @keyframes beat{
   50%{transform:scale(1.08)}
 }
@@ -56,7 +55,7 @@ canvas{
   animation:glowPulse 1.5s infinite;
 }
 
-/* MUSIC BUTTON */
+/* MUSIC */
 .music{
   position:fixed;
   top:20px;right:20px;
@@ -67,6 +66,7 @@ canvas{
   padding:10px 14px;
   border-radius:50%;
   color:white;
+  font-size:18px;
 }
 
 /* SECTIONS */
@@ -90,7 +90,7 @@ section{
   opacity:.9;
 }
 
-/* SWIPE HINT */
+/* SWIPE */
 .hint{
   margin-top:40px;
   opacity:.6;
@@ -115,7 +115,7 @@ section{
   transform:rotate(-15deg) scale(.9);
 }
 
-/* CUT CAKE BUTTON */
+/* BUTTON */
 .cut-btn{
   margin:25px auto 0;
   padding:14px 35px;
@@ -151,8 +151,8 @@ section{
 /* CONFETTI */
 .confetti{
   position:fixed;
-  width:10px;height:10px;
-  background:hotpink;
+  width:10px;
+  height:10px;
   animation:fall 1.2s linear forwards;
 }
 @keyframes fall{
@@ -195,7 +195,7 @@ section{
 
   <div class="cake" id="cake">🎂</div>
 
-  <button class="cut-btn" onclick="cutCake(event)">
+  <button class="cut-btn" onclick="cutCake()">
     💗 Tap to Cut Cake 💗
   </button>
 
@@ -216,24 +216,60 @@ section{
 
 <script>
 /* MUSIC */
-const song=document.getElementById("song");
+const song = document.getElementById("song");
+const overlay = document.getElementById("overlay");
+
 function start(){
-  overlay.style.display="none";
-  song.load();
+  overlay.style.display = "none";
   song.play().catch(()=>{});
 }
+
 function toggleMusic(){
   song.paused ? song.play() : song.pause();
 }
 
-/* CAKE LOGIC */
-const cake=document.getElementById("cake");
-const msg=document.getElementById("msg");
-const secret=document.getElementById("secret");
-const text="Wooooow 🎉";
-let i=0,done=false;
+/* CAKE */
+const cake = document.getElementById("cake");
+const msg = document.getElementById("msg");
+const secret = document.getElementById("secret");
 
-function cutCake(e){
+const text = "Wooooow 🎉 Cake cut ho gaya!";
+let i = 0;
+let done = false;
+
+function cutCake(){
   if(done) return;
-  done=true;
-  cake.classList.add
+  done = true;
+
+  cake.classList.add("cut");
+  typeText();
+  confetti();
+}
+
+/* TYPE EFFECT */
+function typeText(){
+  if(i < text.length){
+    msg.innerHTML += text.charAt(i);
+    i++;
+    setTimeout(typeText, 80);
+  }else{
+    secret.style.display = "block";
+  }
+}
+
+/* CONFETTI */
+function confetti(){
+  for(let j=0;j<40;j++){
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = Math.random()*100+"vw";
+    c.style.top = "-20px";
+    c.style.background = `hsl(${Math.random()*360},100%,70%)`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1200);
+  }
+}
+</script>
+
+</body>
+</html>
