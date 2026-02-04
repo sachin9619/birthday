@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday 💖</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'Poppins',sans-serif;
+  color:white;
+  background:#120009;
+  overflow-x:hidden;
+}
+
+/* ===== BACKGROUND ===== */
+canvas{
+  position:fixed;
+  inset:0;
+  z-index:-2;
+}
+#hearts{z-index:-1}
+
+/* ===== START OVERLAY ===== */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:black;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+.overlay button{
+  padding:18px 38px;
+  font-size:20px;
+  border:none;
+  border-radius:50px;
+  background:linear-gradient(45deg,#ff5db1,#ff9ad5);
+  color:white;
+}
+
+/* ===== MUSIC BTN ===== */
+.music{
+  position:fixed;
+  top:20px;right:20px;
+  z-index:50;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(10px);
+  border:none;
+  padding:10px 14px;
+  border-radius:50%;
+  color:white;
+}
+
+/* ===== SECTIONS ===== */
+section{
+  min-height:100vh;
+  padding:30px 22px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  text-align:center;
+}
+
+/* hero */
+.hero h1{
+  font-size:40px;
+  animation:beat 1.4s infinite;
+}
+@keyframes beat{50%{transform:scale(1.05)}}
+.hero p{
+  margin-top:18px;
+  font-size:18px;
+  opacity:.9;
+}
+
+/* swipe hint */
+.hint{
+  margin-top:40px;
+  opacity:.6;
+  font-size:14px;
+  animation:updown 1.5s infinite;
+}
+@keyframes updown{
+  50%{transform:translateY(6px)}
+}
+
+/* photos */
+.photos img{
+  width:100%;
+  border-radius:22px;
+  margin:18px 0;
+  box-shadow:0 0 25px rgba(255,120,180,.55);
+  animation:fadeUp 1s forwards;
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(40px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* cake */
+.cake{
+  font-size:150px;
+  cursor:pointer;
+  transition:.4s;
+}
+.cake.cut{
+  transform:rotate(-15deg) scale(.9);
+}
+.msg{
+  margin-top:20px;
+  font-size:22px;
+  min-height:60px;
+}
+
+/* secret */
+.secret{
+  display:none;
+  margin-top:30px;
+  padding:20px;
+  border-radius:20px;
+  background:rgba(255,200,220,.15);
+  backdrop-filter:blur(14px);
+}
+
+/* end */
+.end h2{font-size:34px}
+.end p{margin-top:15px;font-size:18px}
+
+/* confetti */
+.confetti{
+  position:fixed;
+  width:10px;height:10px;
+  background:hotpink;
+  animation:fall 1.2s linear forwards;
+}
+@keyframes fall{
+  to{transform:translateY(300px) rotate(360deg);opacity:0}
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="aurora"></canvas>
+<canvas id="hearts"></canvas>
+
+<audio id="song" src="assets/songbday.mp3" loop></audio>
+<button class="music" onclick="toggleMusic()">🎵</button>
+
+<div class="overlay" id="overlay">
+  <button onclick="start()">Tap to Begin 💖</button>
+</div>
+
+<section class="hero">
+  <h1>Happy Birthday Kuunu Don💕</h1>
+  <p>Scroll down for surprise 😁<br>It’s a moment made for you ✨</p>
+  <div class="hint">⬇ swipe ⬇</div>
+</section>
+
+<section class="photos">
+  <img src="assets/1.jpeg">
+  <img src="assets/2.jpeg">
+  <img src="assets/3.jpeg">
+  <img src="assets/4.png">
+  <img src="assets/5.jpeg">
+</section>
+
+<section>
+  <h2>Make a wish & cut the cake 🎂</h2>
+  <div class="cake" id="cake">🎂</div>
+  <div class="msg" id="msg"></div>
+
+  <div class="secret" id="secret">
+    <p>"Wishing you a many many happy returns of the day Ruchi ✨, Kunnu Don 😁, Daimond ❤️ <br> May your life be filled with love, happiness, success, and endless smiles 💐
+Always stay the amazing soul you are 💖"</p>
+  </div>
+</section>
+
+<section class="end">
+  <h2>Aur Tension mat le Aunty will Recover Fast 💖</h2>
+</section>
+
+<script>
+/* MUSIC */
+const song=document.getElementById("song");
+function start(){
+  overlay.style.display="none";
+  song.play();
+}
+function toggleMusic(){
+  song.paused ? song.play() : song.pause();
+}
+
+/* CAKE */
+const cake=document.getElementById("cake");
+const msg=document.getElementById("msg");
+const secret=document.getElementById("secret");
+const text="Wooooow";
+let i=0,done=false;
+
+cake.onclick=(e)=>{
+  if(done) return;
+  done=true;
+  cake.classList.add("cut");
+  if(navigator.vibrate) navigator.vibrate(200);
+  typeText();
+  confetti(e.clientX,e.clientY);
+  setTimeout(()=>secret.style.display="block",1200);
+};
+
+function typeText(){
+  if(i<text.length){
+    msg.innerHTML+=text.charAt(i);
+    i++;
+    setTimeout(typeText,45);
+  }
+}
+
+function confetti(x,y){
+  for(let i=0;i<30;i++){
+    let c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=x+"px";
+    c.style.top=y+"px";
+    c.style.background=`hsl(${330+Math.random()*20},100%,70%)`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1200);
+  }
+}
+
+/* ===== HEART BACKGROUND ===== */
+const hearts=document.getElementById("hearts");
+const hctx=hearts.getContext("2d");
+
+function resizeH(){
+  hearts.width=innerWidth;
+  hearts.height=innerHeight;
+}
+resizeH(); addEventListener("resize",resizeH);
+
+let heartArr=[...Array(80)].map(()=>({
+  x:Math.random()*hearts.width,
+  y:Math.random()*hearts.height,
+  s:Math.random()*0.6+0.4,
+  sp:Math.random()*0.4+0.2,
+  a:Math.random()*Math.PI*2
+}));
+
+function drawHeart(x,y,s){
+  hctx.save();
+  hctx.translate(x,y);
+  hctx.scale(s,s);
+  hctx.beginPath();
+  hctx.moveTo(0,-5);
+  hctx.bezierCurveTo(-5,-15,-25,-5,0,20);
+  hctx.bezierCurveTo(25,-5,5,-15,0,-5);
+  hctx.fill();
+  hctx.restore();
+}
+
+(function animateHearts(){
+  hctx.clearRect(0,0,hearts.width,hearts.height);
+  hctx.fillStyle="rgba(255,160,190,0.35)";
+  heartArr.forEach(h=>{
+    drawHeart(h.x,h.y,h.s);
+    h.y+=h.sp;
+    if(h.y>hearts.height+30) h.y=-30;
+  });
+  requestAnimationFrame(animateHearts);
+})();
+
+/* ===== PINK AURORA ===== */
+const aur=document.getElementById("aurora"),actx=aur.getContext("2d");
+function ra(){aur.width=innerWidth;aur.height=innerHeight}
+ra(); addEventListener("resize",ra);
+
+let blobs=[...Array(4)].map(()=>({
+  x:Math.random()*aur.width,
+  y:Math.random()*aur.height,
+  r:300,
+  dx:(Math.random()-.5)*.2,
+  dy:(Math.random()-.5)*.2
+}));
+
+(function drawAurora(){
+  actx.clearRect(0,0,aur.width,aur.height);
+  blobs.forEach(b=>{
+    actx.beginPath();
+    actx.arc(b.x,b.y,b.r,0,Math.PI*2);
+    actx.fillStyle="rgba(255,120,170,.12)";
+    actx.fill();
+    b.x+=b.dx; b.y+=b.dy;
+    if(b.x<0||b.x>aur.width) b.dx*=-1;
+    if(b.y<0||b.y>aur.height) b.dy*=-1;
+  });
+  requestAnimationFrame(drawAurora);
+})();
+</script>
+
+</body>
+</html>
