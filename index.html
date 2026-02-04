@@ -24,6 +24,17 @@ canvas{
 }
 #hearts{z-index:-1}
 
+/* ===== GLOW ANIMATIONS ===== */
+@keyframes glowPulse{
+  0%{box-shadow:0 0 15px rgba(255,120,180,.6)}
+  50%{box-shadow:0 0 35px rgba(255,120,180,1)}
+  100%{box-shadow:0 0 15px rgba(255,120,180,.6)}
+}
+
+@keyframes beat{
+  50%{transform:scale(1.08)}
+}
+
 /* START OVERLAY */
 .overlay{
   position:fixed;
@@ -35,12 +46,14 @@ canvas{
   z-index:999;
 }
 .overlay button{
-  padding:18px 38px;
+  padding:18px 40px;
   font-size:20px;
   border:none;
   border-radius:50px;
   background:linear-gradient(45deg,#ff5db1,#ff9ad5);
   color:white;
+  cursor:pointer;
+  animation:glowPulse 1.5s infinite;
 }
 
 /* MUSIC BUTTON */
@@ -71,7 +84,6 @@ section{
   font-size:40px;
   animation:beat 1.4s infinite;
 }
-@keyframes beat{50%{transform:scale(1.05)}}
 .hero p{
   margin-top:18px;
   font-size:18px;
@@ -83,10 +95,7 @@ section{
   margin-top:40px;
   opacity:.6;
   font-size:14px;
-  animation:updown 1.5s infinite;
-}
-@keyframes updown{
-  50%{transform:translateY(6px)}
+  animation:beat 1.5s infinite;
 }
 
 /* PHOTOS */
@@ -100,12 +109,26 @@ section{
 /* CAKE */
 .cake{
   font-size:150px;
-  cursor:pointer;
   transition:.4s;
 }
 .cake.cut{
   transform:rotate(-15deg) scale(.9);
 }
+
+/* CUT CAKE BUTTON */
+.cut-btn{
+  margin:25px auto 0;
+  padding:14px 35px;
+  font-size:18px;
+  border:none;
+  border-radius:40px;
+  background:linear-gradient(45deg,#ff5db1,#ff9ad5);
+  color:white;
+  cursor:pointer;
+  animation:glowPulse 1.4s infinite;
+}
+
+/* MESSAGE */
 .msg{
   margin-top:20px;
   font-size:22px;
@@ -143,7 +166,6 @@ section{
 <canvas id="aurora"></canvas>
 <canvas id="hearts"></canvas>
 
-<!-- AUDIO (FIXED) -->
 <audio id="song" preload="auto" playsinline>
   <source src="songbday.mp3" type="audio/mpeg">
 </audio>
@@ -170,7 +192,13 @@ section{
 
 <section>
   <h2>Tap the cake to cut 🎂</h2>
+
   <div class="cake" id="cake">🎂</div>
+
+  <button class="cut-btn" onclick="cutCake(event)">
+    💗 Tap to Cut Cake 💗
+  </button>
+
   <div class="msg" id="msg"></div>
 
   <div class="secret" id="secret">
@@ -187,96 +215,25 @@ section{
 </section>
 
 <script>
-/* MUSIC FIX */
-const song = document.getElementById("song");
-
+/* MUSIC */
+const song=document.getElementById("song");
 function start(){
   overlay.style.display="none";
   song.load();
   song.play().catch(()=>{});
 }
-
 function toggleMusic(){
   song.paused ? song.play() : song.pause();
 }
 
-/* CAKE */
+/* CAKE LOGIC */
 const cake=document.getElementById("cake");
 const msg=document.getElementById("msg");
 const secret=document.getElementById("secret");
 const text="Wooooow 🎉";
 let i=0,done=false;
 
-cake.onclick=(e)=>{
+function cutCake(e){
   if(done) return;
   done=true;
-  cake.classList.add("cut");
-  if(navigator.vibrate) navigator.vibrate(200);
-  typeText();
-  confetti(e.clientX,e.clientY);
-  setTimeout(()=>secret.style.display="block",1200);
-};
-
-function typeText(){
-  if(i<text.length){
-    msg.innerHTML+=text.charAt(i++);
-    setTimeout(typeText,45);
-  }
-}
-
-function confetti(x,y){
-  for(let i=0;i<30;i++){
-    let c=document.createElement("div");
-    c.className="confetti";
-    c.style.left=x+"px";
-    c.style.top=y+"px";
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(),1200);
-  }
-}
-
-/* HEART BACKGROUND */
-const hearts=document.getElementById("hearts");
-const hctx=hearts.getContext("2d");
-
-function resizeH(){
-  hearts.width=innerWidth;
-  hearts.height=innerHeight;
-}
-resizeH(); addEventListener("resize",resizeH);
-
-let heartArr=[...Array(80)].map(()=>({
-  x:Math.random()*hearts.width,
-  y:Math.random()*hearts.height,
-  s:Math.random()*0.6+0.4,
-  sp:Math.random()*0.4+0.2
-}));
-
-function drawHeart(x,y,s){
-  hctx.save();
-  hctx.translate(x,y);
-  hctx.scale(s,s);
-  hctx.beginPath();
-  hctx.moveTo(0,-5);
-  hctx.bezierCurveTo(-5,-15,-25,-5,0,20);
-  hctx.bezierCurveTo(25,-5,5,-15,0,-5);
-  hctx.fillStyle="rgba(255,160,190,0.35)";
-  hctx.fill();
-  hctx.restore();
-}
-
-(function animateHearts(){
-  hctx.clearRect(0,0,hearts.width,hearts.height);
-  heartArr.forEach(h=>{
-    drawHeart(h.x,h.y,h.s);
-    h.y+=h.sp;
-    if(h.y>hearts.height+30) h.y=-30;
-  });
-  requestAnimationFrame(animateHearts);
-})();
-</script>
-
-</body>
-</html>
-
-
+  cake.classList.add
